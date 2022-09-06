@@ -9,7 +9,7 @@
 
 <!DOCTYPE module PUBLIC
           "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
-          "https://checkstyle.org/dtds/configuration_1_3.dtd">
+          "http://checkstyle.sourceforge.net/dtds/configuration_1_3.dtd">
 
 <module name="Checker">
 	<!-- If you set the basedir property below, then all reported file names 
@@ -27,6 +27,10 @@
 	<!-- See http://checkstyle.sf.net/config_misc.html#NewlineAtEndOfFile -->
 	<module name="NewlineAtEndOfFile">
 		<property name="lineSeparator" value="lf" />
+	</module>
+
+	<module name="LineLength">
+		<property name="max" value="130"/>
 	</module>
 
 	<property name="severity" value="warning" />
@@ -52,38 +56,10 @@
 		<property name="message" value="Line has trailing spaces." />
 	</module>
 	<module name="RegexpMultiline">
-		<property name="severity" value="error" />
+		<property name="severity" value="warning" />
 		<property name="fileExtensions" value="java,xtend,scala,kt,xml,groovy,yaml,yml" />
 		<property name="format" value="(?s:(\r\n|\r).*)"/>
 		<property name="message" value="CRLF and CR line endings are prohibited, but this file uses them."/>
-	</module>
-	<module name="RegexpSingleline">
-		<property name="severity" value="error" />
-		<property name="format" value="Math\s*\.\s*random\s*\(\s*\)" />
-		<property name="fileExtensions" value="java,xtend,scala,kt" />
-		<property name="message"
-			value="Don't use Math.random() inside Alchemist. Breaks stuff." />
-	</module>
-	<module name="RegexpSingleline">
-		<property name="severity" value="error" />
-		<property name="format" value="class\s*\.\s*forName\s*\(" />
-		<property name="fileExtensions" value="java,xtend,scala,kt" />
-		<property name="message"
-			value="Use the library to load classes and resources. Breaks grid otherwise." />
-	</module>
-	<module name="RegexpSingleline">
-		<property name="severity" value="error" />
-		<property name="format" value="class\s*\.\s*getResource" />
-		<property name="fileExtensions" value="java,xtend,scala,kt" />
-		<property name="message"
-			value="Use the library to load classes and resources. Breaks grid otherwise." />
-	</module>
-	<module name="RegexpSingleline">
-		<property name="severity" value="error" />
-		<property name="format" value="class\s*\.\s*getClassLoader" />
-		<property name="fileExtensions" value="java,xtend,scala,kt" />
-		<property name="message"
-			value="Use the library to load classes and resources. Breaks grid otherwise." />
 	</module>
 	<module name="RegexpSingleline">
 		<property name="severity" value="warning" />
@@ -99,24 +75,18 @@
 			<property name="onCommentFormat" value="CHECKSTYLE: ([\w\|]+) ON" />
 			<property name="checkFormat" value="$1" />
 		</module>
-
-		<!-- Checks for missing Javadoc comments. -->
+		<!-- Checks for Javadoc comments. -->
 		<!-- See http://checkstyle.sf.net/config_javadoc.html -->
-		<module name="MissingJavadocMethod">
+		<module name="JavadocMethod">
 			<property name="scope" value="protected" />
 		</module>
-		<module name="MissingJavadocType">
-			<property name="severity" value="error" />
+		<module name="JavadocType">
+			<property name="severity" value="warning" />
 			<property name="scope" value="protected" />
 		</module>
 		<module name="JavadocVariable">
 			<property name="scope" value="protected" />
 		</module>
-
-		<!-- Checks for well-formed Javadoc comments. -->
-		<!-- See http://checkstyle.sf.net/config_javadoc.html -->
-		<module name="JavadocMethod" />
-		<module name="JavadocType" />
 		<module name="JavadocStyle" />
 
 		<!-- Checks for Naming Conventions. -->
@@ -183,6 +153,10 @@
 		<module name="SimplifyBooleanExpression" />
 		<module name="SimplifyBooleanReturn" />
 
+		<!-- Checks for class design -->
+		<!-- See http://checkstyle.sf.net/config_design.html -->
+		<module name="DesignForExtension">
+		</module>
 		<module name="FinalClass">
             <property name="severity" value="warning" />
 		</module>
@@ -195,8 +169,8 @@
 		<module name="ArrayTypeStyle" />
 		<module name="FinalParameters" />
 		<module name="TodoComment">
-            <property name="severity" value="info" />
-        </module>
+			<property name="severity" value="info" />
+		</module>
 		<module name="UpperEll" />
 	</module>
 </module>

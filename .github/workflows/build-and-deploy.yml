@@ -1,0 +1,63 @@
+name: CI
+on:
+  push:
+    tags:
+      - '*'
+    branches-ignore:
+      - 'autodelivery**'
+      - 'bump-**'
+      - 'renovate/**'
+      - 'dependabot/**'
+    paths-ignore:
+      - 'CHANGELOG.md'
+      - 'LICENSE'
+      - 'README.md'
+      - 'renovate.json'
+      - '.gitignore'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [windows, macos, ubuntu]
+    runs-on: ${{ matrix.os }}-latest
+    steps:
+      - name: Checkout
+        uses: DanySK/action-checkout@0.2.1
+      - uses: DanySK/build-check-deploy-gradle-action@2.1.5
+        with:
+          check-command: ./gradlew blame
+          should-run-codecov: false
+          should-deploy: false
+      - uses: paulhatch/semantic-version@v4.0.3
+        if: matrix.os == 'ubuntu'
+        id: version
+        with:
+          tag_prefix: ''
+          major_pattern: '/\w+(\(\w+\))?\!:\s.+/'
+          minor_pattern: '/feat(\(\w+\))?:\s.+/'
+          format: "${major}.${minor}.${patch}-dev${increment}"
+          bump_each_commit: true
+          search_commit_body: false
+      - name: Release
+        if: matrix.os == 'ubuntu'
+        uses: ncipollo/release-action@v1.10.0
+        with:
+          tag: ${{ steps.version.outputs.version_tag }}
+          artifacts: "**/*blame*.md"
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+  ci-success:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    if: >-
+      always() && (
+        contains(join(needs.*.result, ','), 'failure')
+        || !contains(join(needs.*.result, ','), 'cancelled')
+      )
+    steps:
+      - name: Verify that there were no failures
+        run: ${{ !contains(join(needs.*.result, ','), 'failure') }}
